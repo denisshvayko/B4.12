@@ -49,7 +49,7 @@ def find(_id, session):
     if query:
         atl_height = session.query(Athlets).filter(Athlets.height > 0).order_by(sa.func.abs(Athlets.height - query.height)).first()
         atl_birthdate = session.query(Athlets).order_by(sa.func.abs(sa.func.julianday(Athlets.birthdate) - sa.func.julianday(query.birthdate))).first()
-        return(atl_height, atl_birthdate)
+        return(atl_height, atl_birthdate, query)
     else:    
         return(None, None)
         
@@ -61,10 +61,11 @@ def main():
     # выбран режим поиска, запускаем его
     _id = input("Введи id пользователя для поиска: ")
     # вызываем функцию поиска по имени
-    atl_height, atl_birthdate = find(_id, session)
+    atl_height, atl_birthdate, query = find(_id, session)
     if atl_height==None and atl_birthdate==None:
         print("User с таким id нет, попробуйте заново")
     else:
+        print(f"Человек с данным id присутсвует: id:{query.id}, first_name:{query.first_name}, birthdate:{query.birthdate}, height:{query.height}")
         print(f"Близкий по дате атлет: id:{atl_birthdate.id}, age:{atl_birthdate.age}, birthdate:{atl_birthdate.birthdate}, gender:{atl_birthdate.gender}, height:{atl_birthdate.height}, name:{atl_birthdate.name}, weight:{atl_birthdate.weight}, gold_medals:{atl_birthdate.gold_medals}, silver_medals:{atl_birthdate.silver_medals}, bronze_medals:{atl_birthdate.bronze_medals}, total_medals:{atl_birthdate.total_medals}, sport:{atl_birthdate.sport}, country:{atl_birthdate.country}")
         print(f"Близкий по возрасту атлет: id:{atl_height.id}, age:{atl_height.age}, birthdate:{atl_height.birthdate}, gender:{atl_height.gender}, height:{atl_height.height}, name:{atl_height.name}, weight:{atl_height.weight}, gold_medals:{atl_height.gold_medals}, silver_medals:{atl_height.silver_medals}, bronze_medals:{atl_height.bronze_medals}, total_medals:{atl_height.total_medals}, sport:{atl_height.sport}, country:{atl_height.country}")
     session.close()
